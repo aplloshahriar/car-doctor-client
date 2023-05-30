@@ -5,7 +5,7 @@ import { AuthContext } from "../../provider/AuthProvider";
 
 const CheckOut = () => {
     const service = useLoaderData();
-    const { title, _id } = service;
+    const { title, _id,price,img } = service;
     const {user}=useContext(AuthContext);
     const handleCheckOut=(event)=>{
         event.preventDefault();
@@ -14,15 +14,36 @@ const CheckOut = () => {
         const name=form.name.value;
         const email=user?.email;
         const date=form.date.value;
-        const time=form.time.value;
-        const order={
+        // const price=form.time.value;
+        const booking={
             customerName:name,
             email,
             date,
-            service:_id,
-            time,
+            img,
+            service:title,
+            service_id:_id,
+            price:price,
+            // time,
         }
-        console.log(order);
+        console.log(booking);
+
+
+        fetch('http://localhost:5000/bookings',{
+            method:'POST',
+            headers:{
+                "content-type":'application/json',
+            },
+            body:JSON.stringify(booking), 
+
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data);
+            if(data.insertedId){
+                alert('Service Booked Successfully')
+            }
+        })
+
     }
     return (
         <div>
@@ -51,9 +72,9 @@ const CheckOut = () => {
                 </div>
                 <div className="form-control">
                     <label className="label">
-                        <span className="label-text">Time</span>
+                        <span className="label-text">Due Amount</span>
                     </label>
-                    <input type="time" name="time" className="input input-bordered" />
+                    <input type="text" defaultValue={price} className="input input-bordered" />
 
 
                 </div>
